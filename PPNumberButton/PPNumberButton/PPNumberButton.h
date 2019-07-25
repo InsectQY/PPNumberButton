@@ -84,6 +84,8 @@ IB_DESIGNABLE
 @property (nonatomic, assign ) IBInspectable CGFloat buttonTitleFont;
 /** 加按钮背景图片 */
 @property (nonatomic, strong ) IBInspectable UIImage *increaseImage;
+/** 最大库存时加按钮背景图片 */
+@property (nonatomic, strong ) IBInspectable UIImage *maxIncreaseImage;
 /** 减按钮背景图片 */
 @property (nonatomic, strong ) IBInspectable UIImage *decreaseImage;
 /** 加按钮标题 */

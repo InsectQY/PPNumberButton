@@ -31,6 +31,7 @@
 
 
 #import "PPNumberButton.h"
+#import "YYTimer.h"
 
 #ifdef DEBUG
 #define PPLog(...) printf("[%s] %s [第%d行]: %s\n", __TIME__ ,__PRETTY_FUNCTION__ ,__LINE__, [[NSString stringWithFormat:__VA_ARGS__] UTF8String])
@@ -45,7 +46,7 @@
     CGFloat _height;    // 控件自身的高
 }
 /** 快速加减定时器*/
-@property (nonatomic, strong) NSTimer *timer;
+@property (nonatomic, strong) YYTimer *timer;
 /** 减按钮*/
 @property (nonatomic, strong) UIButton *decreaseBtn;
 /** 加按钮*/
@@ -120,7 +121,7 @@
 //设置加减按钮的公共方法
 - (UIButton *)creatButton
 {
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeSystem];
+    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
     button.titleLabel.font = [UIFont boldSystemFontOfSize:_buttonTitleFont];
     [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
@@ -159,9 +160,9 @@
     [_textField resignFirstResponder];
     
     if (sender == _increaseBtn) {
-        _timer = [NSTimer scheduledTimerWithTimeInterval:_longPressSpaceTime target:self selector:@selector(increase) userInfo:nil repeats:YES];
+        _timer = [YYTimer timerWithTimeInterval:_longPressSpaceTime target:self selector:@selector(increase) repeats:YES];
     } else {
-        _timer = [NSTimer scheduledTimerWithTimeInterval:_longPressSpaceTime target:self selector:@selector(decrease) userInfo:nil repeats:YES];
+        _timer = [YYTimer timerWithTimeInterval:_longPressSpaceTime target:self selector:@selector(decrease) repeats:YES];
     }
     [_timer fire];
 }
@@ -175,6 +176,8 @@
     [self checkTextFieldNumberWithUpdate];
     
     CGFloat number = [_textField.text floatValue] +     self.stepValue;
+
+    [self checkNum:number];
     
     if (number <= _maxValue) {
         // 当按钮为"减号按钮隐藏模式",且输入框值==设定最小值,减号按钮展开
@@ -196,8 +199,13 @@
         
         [self buttonClickCallBackWithIncreaseStatus:YES];
     } else {
-        if (_shakeAnimation) { [self shakeAnimationMethod]; } PPLog(@"已超过最大数量%.1f",_maxValue);
+        if (_shakeAnimation) { [self shakeAnimationMethod]; }
     }
+}
+
+- (void)checkNum:(NSInteger)number {
+    // 超过最大库存或没有库存
+    _increaseBtn.selected = number >= _maxValue;
 }
 
 /// 减运算
@@ -206,6 +214,8 @@
     [self checkTextFieldNumberWithUpdate];
     
     CGFloat number = [_textField.text floatValue] - self.stepValue;
+
+    [self checkNum:number];
     
     if (number >= _minValue) {
         if (self.decimalNum) {
@@ -352,6 +362,11 @@
     [_decreaseBtn setTitle:decreaseTitle forState:UIControlStateNormal];
 }
 
+- (void)setMaxIncreaseImage:(UIImage *)maxIncreaseImage {
+    _maxIncreaseImage = maxIncreaseImage;
+    [_increaseBtn setBackgroundImage:maxIncreaseImage forState:UIControlStateSelected];
+}
+
 - (void)setIncreaseImage:(UIImage *)increaseImage
 {
     _increaseImage = increaseImage;
@@ -378,7 +393,9 @@
         _decreaseBtn.alpha = 1;
         _decreaseBtn.frame = CGRectMake(0, 0, _height, _height);
     }
-    
+
+    [self checkNum:currentNumber];
+
     if (self.decimalNum) {
         _textField.text = [NSString stringWithFormat:@"%.1f",currentNumber];
     }else{
