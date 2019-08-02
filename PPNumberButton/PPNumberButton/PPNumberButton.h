@@ -43,6 +43,10 @@
  @param increaseStatus 是否为加状态
  */
 - (void)pp_numberButton:(PPNumberButton *)numberButton number:(NSInteger)number increaseStatus:(BOOL)increaseStatus;
+/// 比最小值小回调
+- (void)lessThanMin;
+/// 比最大值大回调
+- (void)moreThanMax;
 
 @end
 
@@ -88,6 +92,8 @@ IB_DESIGNABLE
 @property (nonatomic, strong ) IBInspectable UIImage *maxIncreaseImage;
 /** 减按钮背景图片 */
 @property (nonatomic, strong ) IBInspectable UIImage *decreaseImage;
+/** 最小值时候的减按钮背景图片 */
+@property (nonatomic, strong ) IBInspectable UIImage *minDecreaseImage;
 /** 加按钮标题 */
 @property (nonatomic, copy   ) IBInspectable NSString *increaseTitle;
 /** 减按钮标题 */

@@ -206,6 +206,8 @@
 - (void)checkNum:(NSInteger)number {
     // 超过最大库存或没有库存
     _increaseBtn.selected = number >= _maxValue;
+    // 少于最小库存
+    _decreaseBtn.selected = number <= _minValue;
 }
 
 /// 减运算
@@ -244,7 +246,10 @@
             
             return;
         }
-        if (_shakeAnimation) { [self shakeAnimationMethod]; } PPLog(@"数量不能小于%.1f",_minValue);
+        if (_shakeAnimation) { [self shakeAnimationMethod]; }
+        if ([_delegate respondsToSelector:@selector(lessThanMin)]) {
+            [_delegate lessThanMin];
+        }
     }
 }
 
@@ -371,6 +376,11 @@
 {
     _increaseImage = increaseImage;
     [_increaseBtn setBackgroundImage:increaseImage forState:UIControlStateNormal];
+}
+
+- (void)setMinDecreaseImage:(UIImage *)minDecreaseImage {
+    _minDecreaseImage = minDecreaseImage;
+    [_decreaseBtn setBackgroundImage:minDecreaseImage forState:UIControlStateSelected];
 }
 
 - (void)setDecreaseImage:(UIImage *)decreaseImage
