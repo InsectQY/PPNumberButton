@@ -80,6 +80,8 @@ IB_DESIGNABLE
 
 /** 输入框中的字体大小 */
 @property (nonatomic, assign ) IBInspectable CGFloat inputFieldFont;
+/** 输入框中的字体颜色 */
+@property (nonatomic, strong ) IBInspectable UIColor *inputFieldTextColor;
 
 /** 长按加减的时间间隔,默认0.1s,设置为 CGFLOAT_MAX 则关闭长按加减功能*/
 @property (nonatomic, assign ) IBInspectable CGFloat longPressSpaceTime;

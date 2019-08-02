@@ -420,6 +420,12 @@
     _inputFieldFont = inputFieldFont;
     _textField.font = [UIFont systemFontOfSize:inputFieldFont];
 }
+
+- (void)setInputFieldTextColor:(UIColor *)inputFieldTextColor {
+    _inputFieldTextColor = inputFieldTextColor;
+    _textField.textColor = inputFieldTextColor;
+}
+
 #pragma mark - 核心动画
 /// 抖动动画
 - (void)shakeAnimationMethod
