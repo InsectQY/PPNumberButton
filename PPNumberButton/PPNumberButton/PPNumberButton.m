@@ -369,24 +369,24 @@
 
 - (void)setMaxIncreaseImage:(UIImage *)maxIncreaseImage {
     _maxIncreaseImage = maxIncreaseImage;
-    [_increaseBtn setBackgroundImage:maxIncreaseImage forState:UIControlStateSelected];
+    [_increaseBtn setImage: maxIncreaseImage forState:UIControlStateSelected];
 }
 
 - (void)setIncreaseImage:(UIImage *)increaseImage
 {
     _increaseImage = increaseImage;
-    [_increaseBtn setBackgroundImage:increaseImage forState:UIControlStateNormal];
+    [_increaseBtn setImage:increaseImage forState:UIControlStateNormal];
 }
 
 - (void)setMinDecreaseImage:(UIImage *)minDecreaseImage {
     _minDecreaseImage = minDecreaseImage;
-    [_decreaseBtn setBackgroundImage:minDecreaseImage forState:UIControlStateSelected];
+    [_decreaseBtn setImage:minDecreaseImage forState:UIControlStateSelected];
 }
 
 - (void)setDecreaseImage:(UIImage *)decreaseImage
 {
     _decreaseImage = decreaseImage;
-    [_decreaseBtn setBackgroundImage:decreaseImage forState:UIControlStateNormal];
+    [_decreaseBtn setImage:decreaseImage forState:UIControlStateNormal];
 }
 
 #pragma mark - 输入框中的内容设置
