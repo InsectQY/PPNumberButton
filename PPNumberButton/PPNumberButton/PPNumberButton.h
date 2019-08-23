@@ -107,6 +107,8 @@ IB_DESIGNABLE
 @property (nonatomic, assign ) CGFloat maxValue;
 /** 目前支持一位小数的递增 */
 @property (nonatomic, assign ) BOOL decimalNum;
+/** 是否是购物车 */
+@property (nonatomic, assign ) BOOL isShoppingCart;
 
 @end
 

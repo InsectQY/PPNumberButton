@@ -32,6 +32,7 @@
 
 #import "PPNumberButton.h"
 #import "YYTimer.h"
+#import "QYNumberButton.h"
 
 #ifdef DEBUG
 #define PPLog(...) printf("[%s] %s [第%d行]: %s\n", __TIME__ ,__PRETTY_FUNCTION__ ,__LINE__, [[NSString stringWithFormat:__VA_ARGS__] UTF8String])
@@ -48,9 +49,9 @@
 /** 快速加减定时器*/
 @property (nonatomic, strong) YYTimer *timer;
 /** 减按钮*/
-@property (nonatomic, strong) UIButton *decreaseBtn;
+@property (nonatomic, strong) QYNumberButton *decreaseBtn;
 /** 加按钮*/
-@property (nonatomic, strong) UIButton *increaseBtn;
+@property (nonatomic, strong) QYNumberButton *increaseBtn;
 /** 数量展示/输入框*/
 @property (nonatomic, strong) UITextField *textField;
 
@@ -119,9 +120,9 @@
 }
 
 //设置加减按钮的公共方法
-- (UIButton *)creatButton
+- (QYNumberButton *)creatButton
 {
-    UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
+    QYNumberButton *button = [QYNumberButton buttonWithType:UIButtonTypeCustom];
     button.titleLabel.font = [UIFont boldSystemFontOfSize:_buttonTitleFont];
     [button setTitleColor:[UIColor grayColor] forState:UIControlStateNormal];
     [button addTarget:self action:@selector(touchDown:) forControlEvents:UIControlEventTouchDown];
@@ -204,10 +205,12 @@
 }
 
 - (void)checkNum:(NSInteger)number {
-    // 超过最大库存或没有库存
-    _increaseBtn.selected = number >= _maxValue;
-    // 少于最小库存
-    _decreaseBtn.selected = number <= _minValue;
+    _increaseBtn.enabled = number < _maxValue;
+    if (_isShoppingCart) {
+        _decreaseBtn.enabled = number > _minValue;
+    } else {
+        _decreaseBtn.enabled = number >= _minValue;
+    }
 }
 
 /// 减运算
@@ -369,7 +372,7 @@
 
 - (void)setMaxIncreaseImage:(UIImage *)maxIncreaseImage {
     _maxIncreaseImage = maxIncreaseImage;
-    [_increaseBtn setImage: maxIncreaseImage forState:UIControlStateSelected];
+    [_increaseBtn setImage: maxIncreaseImage forState:UIControlStateDisabled];
 }
 
 - (void)setIncreaseImage:(UIImage *)increaseImage
@@ -380,7 +383,7 @@
 
 - (void)setMinDecreaseImage:(UIImage *)minDecreaseImage {
     _minDecreaseImage = minDecreaseImage;
-    [_decreaseBtn setImage:minDecreaseImage forState:UIControlStateSelected];
+    [_decreaseBtn setImage:minDecreaseImage forState:UIControlStateDisabled];
 }
 
 - (void)setDecreaseImage:(UIImage *)decreaseImage
