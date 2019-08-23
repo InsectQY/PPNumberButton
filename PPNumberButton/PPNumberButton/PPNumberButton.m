@@ -134,12 +134,16 @@
 - (void)layoutSubviews
 {
     [super layoutSubviews];
-    
+
+    if (_spacing == 0) {
+        _spacing = 15;
+    }
+
     _width =  self.frame.size.width;
     _height = self.frame.size.height;
-    _textField.frame = CGRectMake(_height, 0, _width - 2*_height, _height);
-    _increaseBtn.frame = CGRectMake(_width - _height, 0, _height, _height);
-    
+    _textField.frame = CGRectMake(_height-_spacing, 0, _width - 2*_height+_spacing, _height);
+    _increaseBtn.frame = CGRectMake(_width - _height-_spacing, 0, _height+_spacing, _height);
+    _increaseBtn.contentEdgeInsets = UIEdgeInsetsMake(0, 0, 0, _spacing);
     if (_decreaseHide && _textField.text.floatValue < _minValue) {
         _decreaseBtn.frame = CGRectMake(_width-_height, 0, _height, _height);
     } else {
@@ -169,17 +173,35 @@
 }
 
 /// 手指松开
-- (void)touchUp:(UIButton *)sender { [self cleanTimer]; }
+- (void)touchUp:(UIButton *)sender {
+    [self cleanTimer];
+}
 
 /// 加运算
 - (void)increase
 {
     [self checkTextFieldNumberWithUpdate];
     
-    CGFloat number = [_textField.text floatValue] +     self.stepValue;
+    CGFloat number = [_textField.text floatValue] + self.stepValue;
 
     [self checkNum:number];
-    
+
+    if ([_delegate respondsToSelector:@selector(pp_numberButton:number:increaseStatus:isCalculation:)]) {
+        [_delegate pp_numberButton:self number:number increaseStatus:YES isCalculation:^BOOL(BOOL isCanSubmit) {
+            if (isCanSubmit) {
+                [self increaseCalculation:number];
+            }
+        }];
+    }else {
+        [self increaseCalculation:number];
+    }
+
+
+
+
+}
+//继续加
+- (void)increaseCalculation: (CGFloat)number{
     if (number <= _maxValue) {
         // 当按钮为"减号按钮隐藏模式",且输入框值==设定最小值,减号按钮展开
         if (_decreaseHide && number==_minValue) {
@@ -191,37 +213,52 @@
                 _textField.hidden = NO;
             }];
         }
-        
+
         if (self.decimalNum) {
             _textField.text = [NSString stringWithFormat:@"%.1f",number];
         }else{
             _textField.text = [NSString stringWithFormat:@"%.f",number];
         }
-        
+
         [self buttonClickCallBackWithIncreaseStatus:YES];
     } else {
         if (_shakeAnimation) { [self shakeAnimationMethod]; }
     }
+
 }
 
 - (void)checkNum:(NSInteger)number {
-    _increaseBtn.enabled = number < _maxValue;
-    if (_isShoppingCart) {
-        _decreaseBtn.enabled = number > _minValue;
-    } else {
-        _decreaseBtn.enabled = number >= _minValue;
-    }
+//    _increaseBtn.enabled = number < _maxValue;
+//    if (_isShoppingCart) {
+//        _decreaseBtn.selected = number > _minValue;
+//    } else {
+//        _decreaseBtn.selected = number >= _minValue;
+//    }
 }
 
 /// 减运算
 - (void)decrease
 {
+
     [self checkTextFieldNumberWithUpdate];
     
     CGFloat number = [_textField.text floatValue] - self.stepValue;
 
     [self checkNum:number];
-    
+
+    if ([_delegate respondsToSelector:@selector(pp_numberButton:number:increaseStatus:isCalculation:)]) {
+        [_delegate pp_numberButton:self number:number increaseStatus:NO isCalculation:^BOOL(BOOL isCanSubmit) {
+            if (isCanSubmit) {
+                [self decreaseCalculation:number];
+            }
+        }];
+     }else {
+         [self decreaseCalculation:number];
+     }
+
+}
+//继续减
+- (void)decreaseCalculation: (CGFloat)number{
     if (number >= _minValue) {
         if (self.decimalNum) {
             _textField.text = [NSString stringWithFormat:@"%.1f",number];
@@ -238,15 +275,15 @@
             }else{
                 _textField.text = [NSString stringWithFormat:@"%.f",_minValue-1];
             }
-            
+
             [self buttonClickCallBackWithIncreaseStatus:NO];
             [self rotationAnimationMethod];
-            
+
             [UIView animateWithDuration:0.3f animations:^{
                 _decreaseBtn.alpha = 0;
                 _decreaseBtn.frame = CGRectMake(_width-_height, 0, _height, _height);
             }];
-            
+
             return;
         }
         if (_shakeAnimation) { [self shakeAnimationMethod]; }
@@ -254,6 +291,7 @@
             [_delegate lessThanMin];
         }
     }
+
 }
 
 /// 点击响应
@@ -372,7 +410,7 @@
 
 - (void)setMaxIncreaseImage:(UIImage *)maxIncreaseImage {
     _maxIncreaseImage = maxIncreaseImage;
-    [_increaseBtn setImage: maxIncreaseImage forState:UIControlStateDisabled];
+    [_increaseBtn setImage: maxIncreaseImage forState:UIControlStateSelected];
 }
 
 - (void)setIncreaseImage:(UIImage *)increaseImage
@@ -383,7 +421,7 @@
 
 - (void)setMinDecreaseImage:(UIImage *)minDecreaseImage {
     _minDecreaseImage = minDecreaseImage;
-    [_decreaseBtn setImage:minDecreaseImage forState:UIControlStateDisabled];
+    [_decreaseBtn setImage:minDecreaseImage forState:UIControlStateSelected];
 }
 
 - (void)setDecreaseImage:(UIImage *)decreaseImage

@@ -35,6 +35,8 @@
 @protocol PPNumberButtonDelegate <NSObject>
 @optional
 
+
+- (void)pp_numberButton:(PPNumberButton *)numberButton number:(NSInteger)number increaseStatus:(BOOL)increaseStatus isCalculation:(BOOL (^)(BOOL isCanSubmit))isCalculation;
 /**
  加减代理回调
  
@@ -109,6 +111,8 @@ IB_DESIGNABLE
 @property (nonatomic, assign ) BOOL decimalNum;
 /** 是否是购物车 */
 @property (nonatomic, assign ) BOOL isShoppingCart;
+
+@property (nonatomic, assign) CGFloat spacing;
 
 @end
 
